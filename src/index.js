@@ -1,5 +1,6 @@
 const express = require('express');
 const { readFile } = require('./service/readFile');
+const { generateToken } = require('./service/generateToken');
 
 const app = express();
 app.use(express.json());
@@ -19,7 +20,7 @@ app.listen(PORT, () => {
 // code req 1
 app.get('/talker', async (_req, res) => {
   const data = await readFile();
-  if (!data) return res.status(200).json([]);
+  if (!data) return res.status(HTTP_OK_STATUS).json([]);
   res.status(HTTP_OK_STATUS).json(data);
 });
 // code req 2
@@ -29,4 +30,10 @@ app.get('/talker/:id', async (req, res) => {
   const talkers = data.find((elem) => elem.id === Number(id));
   if (!talkers) return res.status(404).send({ message: 'Pessoa palestrante não encontrada' });
   res.status(200).json(talkers);
+});
+// code req 3
+app.post('/login', (_req, res) => {
+  const token = generateToken();
+
+  res.status(HTTP_OK_STATUS).json({ token });
 });
