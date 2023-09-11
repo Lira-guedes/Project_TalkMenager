@@ -1,6 +1,7 @@
 const express = require('express');
 const { readFile } = require('./service/readFile');
 const { generateToken } = require('./service/generateToken');
+const { validateLogin } = require('./service/validateLogin');
 
 const app = express();
 app.use(express.json());
@@ -31,9 +32,8 @@ app.get('/talker/:id', async (req, res) => {
   if (!talkers) return res.status(404).send({ message: 'Pessoa palestrante não encontrada' });
   res.status(200).json(talkers);
 });
-// code req 3
-app.post('/login', (_req, res) => {
+// code req 3 e 4
+app.post('/login', validateLogin, (_req, res) => {
   const token = generateToken();
-
   res.status(HTTP_OK_STATUS).json({ token });
 });
