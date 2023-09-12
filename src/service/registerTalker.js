@@ -44,7 +44,7 @@ const watchedAtValidation = (req, res, next) => {
 const rateValidation = (req, res, next) => {
   const { rate } = req.body.talk;
   const integerRate = Number.isInteger(rate);
-  if (!rate) {
+  if (rate === undefined) {
     return res.status(400).json({ message: 'O campo "rate" é obrigatório' });
   }
   if (rate < 1 || rate > 5 || !integerRate) {

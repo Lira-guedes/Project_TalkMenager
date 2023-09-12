@@ -28,7 +28,7 @@ app.listen(PORT, () => {
 // code req 1
 app.get('/talker', async (_req, res) => {
   const data = await readFile();
-  if (!data) return res.status(HTTP_OK_STATUS).json([]);
+  // if (!data) return res.status(HTTP_OK_STATUS).json([]);
   res.status(HTTP_OK_STATUS).json(data);
 });
 // code req 2
@@ -45,9 +45,8 @@ app.post('/login', validateLogin, (_req, res) => {
   res.status(HTTP_OK_STATUS).json({ token });
 });
 // code req 5
-app.post('/talker', rateValidation,
-  talkValidation,
-  tokenValidation,
+app.post('/talker', tokenValidation, talkValidation, 
+  rateValidation,
   nameValidation,
   ageValidation,
   watchedAtValidation, async (req, res) => {
@@ -59,8 +58,8 @@ app.post('/talker', rateValidation,
     res.status(201).json(addTalker);
 });
 // code req 6
- app.put('/talker/:id', rateValidation,
-  talkValidation,
+ app.put('/talker/:id', tokenValidation, talkValidation, 
+  rateValidation,
   tokenValidation,
   nameValidation,
   ageValidation,
@@ -69,20 +68,18 @@ app.post('/talker', rateValidation,
     const talker = await readFile();
     const { id } = req.params;
     const editTalker = talker.find((elem) => elem.id === Number(id));
-    if (editTalker) {
-      editTalker.name = name;
-      editTalker.age = age;
-      editTalker.talk = talk;
-      const index = talker.indexOf(editTalker);
-      const updateTalker = { id: editTalker.id, ...req.body };
-      talker.splice(index, 1, updateTalker);
-      await writeFile(talker);
-      res.status(200).json(editTalker);
-    }
     if (!editTalker) return res.status(404).send({ message: 'Pessoa palestrante não encontrada' });
+    editTalker.name = name;
+    editTalker.age = age;
+    editTalker.talk = talk;
+    const index = talker.indexOf(editTalker);
+    const updateTalker = { id: editTalker.id, ...req.body };
+    talker.splice(index, 1, updateTalker);
+    await writeFile(talker);
+    res.status(200).json(editTalker);
   });
 // code req 7
-app.delete('/talker/:id', async (req, res) => {
+app.delete('/talker/:id', tokenValidation, async (req, res) => {
   const { id } = req.params;
   const data = await readFile();
   const deleteTalker = data.findIndex((elem) => elem.id === Number(id));
