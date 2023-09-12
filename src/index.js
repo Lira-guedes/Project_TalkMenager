@@ -81,3 +81,12 @@ app.post('/talker', rateValidation,
     }
     if (!editTalker) return res.status(404).send({ message: 'Pessoa palestrante não encontrada' });
   });
+// code req 7
+app.delete('/talker/:id', async (req, res) => {
+  const { id } = req.params;
+  const data = await readFile();
+  const deleteTalker = data.findIndex((elem) => elem.id === Number(id));
+  data.splice(deleteTalker, 1);
+  await writeFile(data);
+  res.status(204).end();
+});
