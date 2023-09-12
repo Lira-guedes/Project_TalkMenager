@@ -58,3 +58,26 @@ app.post('/talker', rateValidation,
     await writeFile(talker);
     res.status(201).json(addTalker);
 });
+// code req 6
+ app.put('/talker/:id', rateValidation,
+  talkValidation,
+  tokenValidation,
+  nameValidation,
+  ageValidation,
+  watchedAtValidation, async (req, res) => {
+    const { name, age, talk } = req.body;
+    const talker = await readFile();
+    const { id } = req.params;
+    const editTalker = talker.find((elem) => elem.id === Number(id));
+    if (editTalker) {
+      editTalker.name = name;
+      editTalker.age = age;
+      editTalker.talk = talk;
+      const index = talker.indexOf(editTalker);
+      const updateTalker = { id: editTalker.id, ...req.body };
+      talker.splice(index, 1, updateTalker);
+      await writeFile(talker);
+      res.status(200).json(editTalker);
+    }
+    if (!editTalker) return res.status(404).send({ message: 'Pessoa palestrante não encontrada' });
+  });
