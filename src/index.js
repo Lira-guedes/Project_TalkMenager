@@ -1,7 +1,14 @@
 const express = require('express');
-const { readFile } = require('./service/readFile');
+const { readFile } = require('./service/readAndWriteFile');
+const { writeFile } = require('./service/readAndWriteFile');
 const { generateToken } = require('./service/generateToken');
 const { validateLogin } = require('./service/validateLogin');
+const { rateValidation,
+  talkValidation,
+  tokenValidation,
+  nameValidation,
+  ageValidation,
+  watchedAtValidation } = require('./service/registerTalker');
 
 const app = express();
 app.use(express.json());
@@ -36,4 +43,18 @@ app.get('/talker/:id', async (req, res) => {
 app.post('/login', validateLogin, (_req, res) => {
   const token = generateToken();
   res.status(HTTP_OK_STATUS).json({ token });
+});
+// code req 5
+app.post('/talker', rateValidation,
+  talkValidation,
+  tokenValidation,
+  nameValidation,
+  ageValidation,
+  watchedAtValidation, async (req, res) => {
+    const { name, age, talk } = req.body;
+    const talker = await readFile();
+    const addTalker = { id: talker.length + 1, name, age, talk };
+    talker.push(addTalker);
+    await writeFile(talker);
+    res.status(201).json(addTalker);
 });

@@ -1,11 +1,12 @@
 const validateLogin = (req, res, next) => {
   const { email, password } = req.body;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const validEmail = emailRegex.test(email);
 
   if (!email) {
     return res.status(400).json({ message: 'O campo "email" é obrigatório' });
   }
-  if (!emailRegex.test(email)) {
+  if (!validEmail) {
     return res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
   if (!password) {
